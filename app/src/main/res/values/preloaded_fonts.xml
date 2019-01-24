@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="preloaded_fonts" translatable="false">
+        <item>@font/kavoon</item>
+        <item>@font/metal_mania</item>
+        <item>@font/nova_cut</item>
+        <item>@font/poppins_light</item>
+    </array>
+</resources>
