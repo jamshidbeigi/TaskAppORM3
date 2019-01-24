@@ -66,4 +66,10 @@ public class UserLab {
         User user=users.get(0);
         mUserDao.delete(user);
     }
+
+//    public void curentUser(User user){
+//
+//        mUserDao.insert(user);
+//
+//    }
 }

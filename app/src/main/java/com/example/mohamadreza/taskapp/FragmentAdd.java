@@ -27,6 +27,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.mohamadreza.taskapp.date.FragmentDatePicker;
 import com.example.mohamadreza.taskapp.date.FragmentTimePicker;
@@ -113,12 +114,42 @@ public class FragmentAdd extends DialogFragment {
 
         String simpleDate = getDateString();
         mDateButton.setText(simpleDate);
-
         String date = getTimeString();
         mTimeButton.setText(date);
-
         solvedCheckBox.setChecked(mTask.getMDone());
 
+        titleETHandler();
+        descriptionETHandler();
+        doneBtnHandle();
+        checkBoxHandle(solvedCheckBox);
+        dateBtnHandle();
+        timeBtnHandle();
+        handleShareButton();
+        handlePhotoButton();
+        updatePhotoView();
+        handleGalleryButton();
+
+        return view;
+    }
+
+    private void doneBtnHandle() {
+        mDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mTask.getTitle() != null){
+                    getDialog().onBackPressed();}
+                else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("you dont create a Task!");
+                    builder.setMessage("Write a Title");
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+            }
+        });
+    }
+
+    private void titleETHandler() {
         mTitleField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -136,7 +167,9 @@ public class FragmentAdd extends DialogFragment {
 
             }
         });
+    }
 
+    private void descriptionETHandler() {
         mDescription.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -154,41 +187,18 @@ public class FragmentAdd extends DialogFragment {
 
             }
         });
+    }
 
-        mDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mTask.getTitle() != null){
-                    getDialog().onBackPressed();}
-                else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setTitle("you dont create a Task!");
-                    builder.setMessage("Write a Title");
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
-                }
-            }
-        });
-
+    private void checkBoxHandle(CheckBox solvedCheckBox) {
         solvedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mTask.setMDone(isChecked);
             }
         });
+    }
 
-        mDateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentDatePicker datePickerFragment = FragmentDatePicker.newInstance(mTask.getMDate());
-                datePickerFragment.setTargetFragment(FragmentAdd.this,
-                        REQ_DATE_PICKER);
-                if (getFragmentManager() != null) {
-                    datePickerFragment.show(getFragmentManager(), DIALOG_TAG);
-                }
-            }
-        });
-
+    private void timeBtnHandle() {
         mTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -200,13 +210,20 @@ public class FragmentAdd extends DialogFragment {
                 }
             }
         });
+    }
 
-        handleShareButton();
-        handlePhotoButton();
-        updatePhotoView();
-        handleGalleryButton();
-
-        return view;
+    private void dateBtnHandle() {
+        mDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentDatePicker datePickerFragment = FragmentDatePicker.newInstance(mTask.getMDate());
+                datePickerFragment.setTargetFragment(FragmentAdd.this,
+                        REQ_DATE_PICKER);
+                if (getFragmentManager() != null) {
+                    datePickerFragment.show(getFragmentManager(), DIALOG_TAG);
+                }
+            }
+        });
     }
 
     private void handleShareButton() {
@@ -261,20 +278,20 @@ public class FragmentAdd extends DialogFragment {
         });
     }
 
+
     private void handleGalleryButton(){
         mGalleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-// Show only images, no videos or anything else
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-// Always show the chooser (if there are multiple options available)
+
+                Intent getImageIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                getImageIntent .setType("image/*");
                 Uri uri = getPhotoFileUri();
+                getImageIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
 
                 PackageManager packageManager = getActivity().getPackageManager();
                 List<ResolveInfo> activities = packageManager.queryIntentActivities(
-                        intent,
+                        getImageIntent,
                         PackageManager.MATCH_DEFAULT_ONLY);
 
                 for (ResolveInfo activity : activities) {
@@ -284,10 +301,7 @@ public class FragmentAdd extends DialogFragment {
                             Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 }
 
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
-
-
-            }
+                startActivityForResult(getImageIntent , PICK_IMAGE_REQUEST );            }
         });
 
     }
@@ -320,11 +334,13 @@ public class FragmentAdd extends DialogFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mTask.getTitle()==null){
+        if (mTask.getTitle()==null|| mTask.getTitle().equals("")){
             TaskLab.getInstance().delete(mTask);
         }
         TaskLab.getInstance().update(mTask);
-        getTargetFragment().onResume();
+        if (getTargetFragment() != null) {
+            getTargetFragment().onResume();
+        }
 
 
     }
@@ -373,15 +389,18 @@ public class FragmentAdd extends DialogFragment {
         }
         else if (requestCode == REQ_PHOTOS) {
             Uri uri = getPhotoFileUri();
-            getActivity().revokeUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-            updatePhotoView();
+            if(getActivity()!=null){
+                getActivity().revokeUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                updatePhotoView();
+            }
         }
 
         else if(requestCode == PICK_IMAGE_REQUEST){
-                Uri uri = getPhotoFileUri();
-            getActivity().revokeUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-            updatePhotoView();
+
+            Uri selectedImageUri = data.getData();
+            mPhotoView.setImageURI(selectedImageUri);
 
         }
     }
+
 }

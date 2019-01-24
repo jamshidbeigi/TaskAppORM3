@@ -20,6 +20,11 @@
     <string name="task_undone">The task is UnDone</string>
     <string name="task_subject">task</string>
     <string name="send_task">Send task via</string>
+    <string name="title_item">تیتر</string>
+    <string name="date_item">28/11/1393</string>
+    <string name="title_first_word">ت</string>
+    <string name="edit_item">Edit</string>
+    <string name="search_edit_text">search</string>
 
 
 </resources>

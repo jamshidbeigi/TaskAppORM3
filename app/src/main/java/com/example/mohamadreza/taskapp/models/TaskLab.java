@@ -27,17 +27,15 @@ public class TaskLab {
 
     public List<Task> getTasks(Long userId) {
 
-        List<Task> tasks = mTaskDao.queryBuilder()
+        return mTaskDao.queryBuilder()
                 .where(TaskDao.Properties.MUserId.eq(userId)).list();
-        return tasks;
     }
 
     public Task getTask(Long taskId) {
         List<Task> tasks = mTaskDao.queryBuilder()
                 .where(TaskDao.Properties.Id.eq(taskId)).list();
 
-        Task task=tasks.get(0);
-        return task;
+        return tasks.get(0);
     }
 
 
@@ -57,11 +55,10 @@ public class TaskLab {
     }
 
     public List<Task> searchTaskList(String search){
-        List<Task> findTasks = mTaskDao.queryBuilder()
+        return mTaskDao.queryBuilder()
                 .whereOr(TaskDao.Properties.MTitle.like("%"+ search + "%"),
                         TaskDao.Properties.MDescription.like("%"+ search + "%"))
                 .list();
-        return findTasks;
     }
 
     public void delete(Task task) {
@@ -70,9 +67,8 @@ public class TaskLab {
 
     public File getPhotoFile(Context context,Task task) {
         File filesDir = context.getFilesDir();
-        File photoFile = new File(filesDir, task.getPhotoName());
 
-        return photoFile;
+        return new File(filesDir, task.getPhotoName());
     }
 
 }
