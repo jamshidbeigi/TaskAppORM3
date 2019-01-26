@@ -20,9 +20,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.example.mohamadreza.taskapp.models.CurrentPosition;
 import com.example.mohamadreza.taskapp.models.Task;
 import com.example.mohamadreza.taskapp.models.TaskLab;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,14 +33,17 @@ import java.util.List;
  */
 public class FragmentTasksList extends Fragment {
 
+    public static final int DOWN_POSITION = 1;
     private static final String ARG_TAB_POSITION = "tab.position";
     private static final String DIALOG_TAG = "DialogDate";
-    public static final int DOWN_POSITION = 1;
-
     private RecyclerView mRecyclerView;
     private TaskAdapter mTaskAdapter;
     private ImageView mImageView;
     private EditText mETSearch;
+
+    public FragmentTasksList() {
+        // Required empty public constructor
+    }
 
     public static FragmentTasksList newInstance(int position) {
         Bundle args = new Bundle();
@@ -46,10 +51,6 @@ public class FragmentTasksList extends Fragment {
         FragmentTasksList fragment = new FragmentTasksList();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public FragmentTasksList() {
-        // Required empty public constructor
     }
 
     @Override
@@ -121,8 +122,8 @@ public class FragmentTasksList extends Fragment {
             }
         });
 
-            List<Task> tasks = TaskLab.getInstance().getTasks(CurrentPosition.getUserId());
-            updateListAndView(tasks);
+        List<Task> tasks = TaskLab.getInstance().getTasks(CurrentPosition.getUserId());
+        updateListAndView(tasks);
     }
 
     private void updateListAndView(List<Task> tasks) {
@@ -149,6 +150,38 @@ public class FragmentTasksList extends Fragment {
             mImageView.setVisibility(View.GONE);
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_task_list, menu);
+        Long guestId = (long) -1;
+        if (!CurrentPosition.getUserId().equals(guestId)) {
+            menu.findItem(R.id.login_menu).setVisible(false);
+//            getActivity().invalidateOptionsMenu();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.delete_task_menu:
+                TaskLab.getInstance().deleteAll(CurrentPosition.getUserId());
+                updateUI();
+                return true;
+
+            case R.id.login_menu:
+                if (getActivity() != null) {
+                    getActivity().onBackPressed();
+                }
+                Intent intent = ActivityLogin.newIntent(getActivity());
+                startActivity(intent);
+
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     private class TaskHolder extends RecyclerView.ViewHolder {
 
@@ -158,13 +191,13 @@ public class FragmentTasksList extends Fragment {
 
         private Task mTask;
 
-         TaskHolder(@NonNull View itemView) {
+        TaskHolder(@NonNull View itemView) {
             super(itemView);
 
             mTitleTextView = itemView.findViewById(R.id.list_item_task_title);
             mDateTextView = itemView.findViewById(R.id.list_item_task_date);
             mWordTextView = itemView.findViewById(R.id.text_view_first_word);
-             Button edit = itemView.findViewById(R.id.button_edit);
+            Button edit = itemView.findViewById(R.id.button_edit);
 
 
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -230,40 +263,6 @@ public class FragmentTasksList extends Fragment {
         @Override
         public int getItemCount() {
             return mTasks.size();
-        }
-    }
-
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.fragment_task_list, menu);
-        Long guestId = (long) -1;
-        if (!CurrentPosition.getUserId().equals(guestId)) {
-            menu.findItem(R.id.login_menu).setVisible(false);
-//            getActivity().invalidateOptionsMenu();
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-
-            case R.id.delete_task_menu:
-                    TaskLab.getInstance().deleteAll(CurrentPosition.getUserId());
-                updateUI();
-                return true;
-
-            case R.id.login_menu:
-                if (getActivity() != null) {
-                    getActivity().onBackPressed();
-                }
-                Intent intent = ActivityLogin.newIntent(getActivity());
-                startActivity(intent);
-
-
-            default:
-                return super.onOptionsItemSelected(item);
         }
     }
 }

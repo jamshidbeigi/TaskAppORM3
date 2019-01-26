@@ -1,13 +1,12 @@
 package com.example.mohamadreza.taskapp.models;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
-import com.example.mohamadreza.taskapp.ActivitySignUp;
 import com.example.mohamadreza.taskapp.Dao.App;
 
 import org.greenrobot.greendao.query.Query;
+
 import java.util.List;
 
 public class UserLab {
@@ -44,32 +43,27 @@ public class UserLab {
             return null;
     }
 
-    public void addUser(Context context,User user) {
+    public void addUser(Context context, User user) {
 
         List<User> users = mUserDao.queryBuilder()
                 .where(UserDao.Properties.MUserName.eq(user.getMUserName()))
                 .list();
 
-        if(users.size() > 0){
-            Toast.makeText(context,"user is repeatty !",Toast.LENGTH_SHORT).show();
-        }
-        else {
+        if (users.size() > 0) {
+            Toast.makeText(context, "user is repeatty !", Toast.LENGTH_SHORT).show();
+        } else {
             mUserDao.insert(user);
         }
     }
-    public void deleteUser(Long userId){
+
+    public void deleteUser(Long userId) {
 
         List<User> users = mUserDao.queryBuilder()
                 .where(UserDao.Properties.Id.eq(userId))
                 .list();
 
-        User user=users.get(0);
+        User user = users.get(0);
         mUserDao.delete(user);
     }
 
-//    public void curentUser(User user){
-//
-//        mUserDao.insert(user);
-//
-//    }
 }

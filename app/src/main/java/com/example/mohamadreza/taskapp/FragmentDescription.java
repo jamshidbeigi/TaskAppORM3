@@ -8,8 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import com.example.mohamadreza.taskapp.models.Task;
 import com.example.mohamadreza.taskapp.models.TaskLab;
+
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -20,16 +22,16 @@ public class FragmentDescription extends DialogFragment {
 
     private Task mTask;
 
+    public FragmentDescription() {
+        // Required empty public constructor
+    }
+
     public static FragmentDescription newInstance(Long taskId) {
         Bundle args = new Bundle();
         args.putLong(ARG_TASK_ID, taskId);
         FragmentDescription fragment = new FragmentDescription();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public FragmentDescription() {
-        // Required empty public constructor
     }
 
     @Override

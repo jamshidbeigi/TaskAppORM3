@@ -3,6 +3,7 @@ package com.example.mohamadreza.taskapp.models;
 import android.content.Context;
 
 import com.example.mohamadreza.taskapp.Dao.App;
+
 import org.greenrobot.greendao.query.DeleteQuery;
 
 import java.io.File;
@@ -54,10 +55,10 @@ public class TaskLab {
         taskDeleteQuery.executeDeleteWithoutDetachingEntities();
     }
 
-    public List<Task> searchTaskList(String search){
+    public List<Task> searchTaskList(String search) {
         return mTaskDao.queryBuilder()
-                .whereOr(TaskDao.Properties.MTitle.like("%"+ search + "%"),
-                        TaskDao.Properties.MDescription.like("%"+ search + "%"))
+                .whereOr(TaskDao.Properties.MTitle.like("%" + search + "%"),
+                        TaskDao.Properties.MDescription.like("%" + search + "%"))
                 .list();
     }
 
@@ -65,7 +66,7 @@ public class TaskLab {
         mTaskDao.delete(task);
     }
 
-    public File getPhotoFile(Context context,Task task) {
+    public File getPhotoFile(Context context, Task task) {
         File filesDir = context.getFilesDir();
 
         return new File(filesDir, task.getPhotoName());

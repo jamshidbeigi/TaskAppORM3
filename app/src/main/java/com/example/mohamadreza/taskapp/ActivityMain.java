@@ -22,8 +22,6 @@ public class ActivityMain extends AppCompatActivity {
 
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
-    private TabItem mAll;
-    private TabItem mDone;
 
     public static Intent newIntent(Context context) {
         Intent intent = new Intent(context, ActivityMain.class);
@@ -46,8 +44,6 @@ public class ActivityMain extends AppCompatActivity {
         setContentView(R.layout.activity_tasks);
 
         mTabLayout = findViewById(R.id.tab_layout);
-        mAll = findViewById(R.id.all_tasks_tab);
-        mDone = findViewById(R.id.done_tasks_tab);
         mViewPager = findViewById(R.id.task_view_pager);
 
         mViewPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
@@ -61,7 +57,8 @@ public class ActivityMain extends AppCompatActivity {
                 return mTabLayout.getTabCount();
             }
         });
-        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
+
+        mTabLayout.setupWithViewPager(mViewPager);
     }
 }
 

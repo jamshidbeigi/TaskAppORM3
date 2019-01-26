@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,7 +26,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.example.mohamadreza.taskapp.date.FragmentDatePicker;
 import com.example.mohamadreza.taskapp.date.FragmentTimePicker;
@@ -53,7 +51,7 @@ public class FragmentAdd extends DialogFragment {
     private static final int REQ_DATE_PICKER = 0;
     private static final int REQ_TIME_PICKER = 1;
     private static final int REQ_PHOTOS = 2;
-    private static final int PICK_IMAGE_REQUEST=3;
+    private static final int PICK_IMAGE_REQUEST = 3;
 
 
     private Task mTask;
@@ -69,16 +67,16 @@ public class FragmentAdd extends DialogFragment {
     private Button mDone;
     private Button mGalleryButton;
 
+    public FragmentAdd() {
+        // Required empty public constructor
+    }
+
     public static FragmentAdd newInstance(Long taskId) {
         Bundle args = new Bundle();
         args.putLong(ARG_TASK_ID, taskId);
         FragmentAdd fragment = new FragmentAdd();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public FragmentAdd() {
-        // Required empty public constructor
     }
 
     @Override
@@ -88,7 +86,7 @@ public class FragmentAdd extends DialogFragment {
         assert getArguments() != null;
         Long taskId = getArguments().getLong(ARG_TASK_ID);
         mTask = TaskLab.getInstance().getTask(taskId);
-        mPhotoFile = TaskLab.getInstance().getPhotoFile(getActivity(),mTask);
+        mPhotoFile = TaskLab.getInstance().getPhotoFile(getActivity(), mTask);
 
     }
 
@@ -136,9 +134,9 @@ public class FragmentAdd extends DialogFragment {
         mDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mTask.getTitle() != null){
-                    getDialog().onBackPressed();}
-                else {
+                if (mTask.getTitle() != null) {
+                    getDialog().onBackPressed();
+                } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setTitle("you dont create a Task!");
                     builder.setMessage("Write a Title");
@@ -242,7 +240,7 @@ public class FragmentAdd extends DialogFragment {
 
     private String getTaskText() {
         @SuppressLint
-        ("SimpleDateFormat") String dateString = new SimpleDateFormat("yyyy/MM/dd").format(mTask.getMDate());
+                ("SimpleDateFormat") String dateString = new SimpleDateFormat("yyyy/MM/dd").format(mTask.getMDate());
 
         String solvedString = mTask.getMDone() ?
                 getString(R.string.task_done) :
@@ -279,13 +277,13 @@ public class FragmentAdd extends DialogFragment {
     }
 
 
-    private void handleGalleryButton(){
+    private void handleGalleryButton() {
         mGalleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 Intent getImageIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                getImageIntent .setType("image/*");
+                getImageIntent.setType("image/*");
                 Uri uri = getPhotoFileUri();
                 getImageIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
 
@@ -301,7 +299,8 @@ public class FragmentAdd extends DialogFragment {
                             Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 }
 
-                startActivityForResult(getImageIntent , PICK_IMAGE_REQUEST );            }
+                startActivityForResult(getImageIntent, PICK_IMAGE_REQUEST);
+            }
         });
 
     }
@@ -334,7 +333,7 @@ public class FragmentAdd extends DialogFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mTask.getTitle()==null|| mTask.getTitle().equals("")){
+        if (mTask.getTitle() == null || mTask.getTitle().equals("")) {
             TaskLab.getInstance().delete(mTask);
         }
         TaskLab.getInstance().update(mTask);
@@ -386,16 +385,13 @@ public class FragmentAdd extends DialogFragment {
             String time = getTimeString();
 
             mTimeButton.setText(time);
-        }
-        else if (requestCode == REQ_PHOTOS) {
+        } else if (requestCode == REQ_PHOTOS) {
             Uri uri = getPhotoFileUri();
-            if(getActivity()!=null){
+            if (getActivity() != null) {
                 getActivity().revokeUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 updatePhotoView();
             }
-        }
-
-        else if(requestCode == PICK_IMAGE_REQUEST){
+        } else if (requestCode == PICK_IMAGE_REQUEST) {
 
             Uri selectedImageUri = data.getData();
             mPhotoView.setImageURI(selectedImageUri);
